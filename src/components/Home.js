@@ -155,7 +155,7 @@ function Home() {
               className='bg-blue-400 px-2 rounded-full text-white'
               onClick={(e) => {
                 e.preventDefault();
-                setDescription([paragraph, ...description]);
+                setDescription([...description, paragraph]);
                 setParagraph('');
               }}
             >
