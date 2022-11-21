@@ -17,21 +17,38 @@ function Home() {
   const [paragraph, setParagraph] = useState('');
   const [fileSize, setFileSize] = useState();
 
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState('');
+
   const addSurah = async () => {
     if (englishName === '') {
       console.log('fill in the english name');
+      setError('fill in the english name');
+      setShowError(true);
     } else if (lugandaName === '') {
       console.log('fill in the luganda name');
+      setError('fill in the luganda name');
+      setShowError(true);
     } else if (name === '') {
       console.log('fill in the name');
+      setError('fill in the surah name');
+      setShowError(true);
     } else if (!number) {
       console.log('fill in the surah index');
+      setError('fill in the surah index');
+      setShowError(true);
     } else if (audioUrl === '') {
       console.log('provide the audio url');
+      setError('provide the audio url');
+      setShowError(true);
     } else if (description.length === 0) {
       console.log('description cannot be empty');
+      setError('description cannot be empty');
+      setShowError(true);
     } else if (!fileSize) {
       console.log('what is the download file size');
+      setError('fill in the file size of the surah');
+      setShowError(true);
     } else {
       console.log(englishName);
       console.log(lugandaName);
@@ -69,7 +86,16 @@ function Home() {
 
   return (
     <form>
-      <div className='flex items-center justify-center flex-col mt-20'>
+      <div className='flex items-center justify-center flex-col mt-20 mb-10'>
+        {showError && (
+          <div className='flex items-center text-white px-3 rounded-full space-x-3 bg-red-400 absolute top-32'>
+            <h3 className='text-2xl '>{error}</h3>
+            <button className='text-2xl ' onClick={() => setShowError(false)}>
+              Ok
+            </button>
+          </div>
+        )}
+
         <div className='my-2'>
           <label htmlFor='name'>
             Arabic Name:{' '}

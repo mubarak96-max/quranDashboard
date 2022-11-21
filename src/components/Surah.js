@@ -11,7 +11,7 @@ function Surah() {
       let surahList = [];
       const querySnapshot = await getDocs(surahCol);
       querySnapshot.forEach((doc) => {
-        console.log(doc.id, ' => ', doc.data());
+        // console.log(doc.id, ' => ', doc.data());
         surahList.push({ id: doc.id, data: doc.data() });
       });
       setSurahs([...surahList]);
@@ -78,7 +78,7 @@ function Surah() {
           audioUrl
         } = item.data;
         return (
-          <div>
+          <div className='px-10'>
             <h3>Surah name: {name}</h3>
 
             <button onClick={() => setShowDetails(!showDetails)}>
