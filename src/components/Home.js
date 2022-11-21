@@ -1,20 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  Timestamp,
-  setDoc,
-  doc,
-  getDoc,
-  getDocs,
-  updateDoc,
-  onSnapshot,
-  where,
-  query
-} from 'firebase/firestore';
+import { setDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { uuidv4 } from '@firebase/util';
-import { surahCol } from '../firebase';
 
 function Home() {
   let navigate = useNavigate();
