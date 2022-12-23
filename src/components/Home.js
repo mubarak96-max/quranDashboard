@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, FieldValue, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { uuidv4 } from '@firebase/util';
 
@@ -66,11 +66,10 @@ function Home() {
           description: description,
           fileSize: fileSize,
           name: name,
-
+          timestamp: serverTimestamp(),
           id: uuidv4()
         };
-        // setLoading(true);
-        // Add a new document in collection "CouponCodes"
+        console.log(surahData);
         await setDoc(doc(db, 'surah', surahData.id), surahData);
 
         console.log('Success', 'surah uploaded successfully');
