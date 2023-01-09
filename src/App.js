@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './components/Home';
+import AddQuote from './components/AddQuotes';
+import Quotes from './components/Quotes';
+import Home from './components/Quran';
 import Surah from './components/Surah';
 
 function App() {
@@ -11,8 +13,10 @@ function App() {
           with exact path "/", in component props 
           we passes the imported component*/}
           <Route exact path='/' element={<Home />} />
+          {/* <Route path='/addQuote' element={<AddQuote />} /> */}
 
           <Route path='/surah' element={<Surah />} />
+          <Route path='/quotes' element={<Quotes />} />
 
           {/* If any route mismatches the upper 
           route endpoints then, redirect triggers 
