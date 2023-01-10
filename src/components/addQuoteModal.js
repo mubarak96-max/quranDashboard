@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import {
   Alert,
@@ -12,9 +11,8 @@ import {
   styled,
   TextField
 } from '@mui/material';
-import { addDoc, collection, doc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Navigate } from 'react-router-dom';
 
 const SubmitButton = styled(Button)(({ theme }) => ({
   color: 'white',
@@ -73,10 +71,10 @@ export default function AddQuoteModal({ openModal, handleClose }) {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async () => {
     if (author === '') {
+      console.log(showError);
       setError('author is required');
       setShowError(true);
     } else if (category === '') {

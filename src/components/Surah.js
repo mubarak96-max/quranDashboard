@@ -35,9 +35,9 @@ function Surah() {
 
     audioUrl,
     englishName,
-    paragraph,
+
     fileSize,
-    name,
+
     lugandaName,
     description
   }) => {

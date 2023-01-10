@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { setDoc, doc, FieldValue, serverTimestamp } from 'firebase/firestore';
+import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { uuidv4 } from '@firebase/util';
 
-function Home() {
+function Quran() {
   let navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -204,4 +204,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Quran;
