@@ -38,7 +38,7 @@ const Quotes = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  });
 
   let navigate = useNavigate();
 
