@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getDocs } from 'firebase/firestore';
 import { surahCol } from '../firebase';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function Surah() {
   const [surahs, setSurahs] = useState([]);
@@ -24,6 +26,8 @@ function Surah() {
     getData();
   }, []);
 
+  let navigate = useNavigate();
+
   console.log(surahs);
 
   const OneSurah = ({
@@ -38,16 +42,8 @@ function Surah() {
     description
   }) => {
     return (
-      // <div className='space-y-5 ml-5 my-14'>
-      //   <h3>{number}</h3>
-      //   <h3>{name}</h3>
-      //   <h3>{englishName}</h3>
-      //   <h3>{lugandaName}</h3>
-      //   <h3>{fileSize} mbs</h3>
-      //   <p>{paragraph}</p>
-      //   <h3>{audioUrl}</h3>
-      // </div>
-      <div>
+      <div className='mt-5'>
+        <Button onClick={() => navigate('/')}>Back Home</Button>
         <div className='space-y-3 ml-5 my-14'>
           <h3>Surah index: {number}</h3>
 
