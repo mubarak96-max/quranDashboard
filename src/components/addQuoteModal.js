@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
@@ -11,7 +11,14 @@ import {
   styled,
   TextField
 } from '@mui/material';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+  updateDoc
+} from 'firebase/firestore';
 import { db } from '../firebase';
 
 const SubmitButton = styled(Button)(({ theme }) => ({
@@ -19,6 +26,16 @@ const SubmitButton = styled(Button)(({ theme }) => ({
   background: 'blue',
   marginBottom: 3,
   marginTop: 2,
+  display: 'block',
+  textAlign: 'center'
+}));
+
+const CancelButton = styled(Button)(({ theme }) => ({
+  color: 'white',
+  background: 'red',
+  marginBottom: 3,
+  marginTop: 2,
+  marginLeft: 8,
   display: 'block',
   textAlign: 'center'
 }));
@@ -62,7 +79,13 @@ const categories = [
   }
 ];
 
-export default function AddQuoteModal({ openModal, handleClose }) {
+export default function AddQuoteModal({
+  openModal,
+  handleClose,
+  isEdit,
+  editId,
+  setLoading
+}) {
   const [author, setAuthor] = useState('');
   const [category, setCategory] = useState('');
   const [commentary, setCommentary] = useState('');
@@ -71,6 +94,26 @@ export default function AddQuoteModal({ openModal, handleClose }) {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    if (isEdit) {
+      const quotesDocRef = doc(db, 'quotes', editId);
+      getDoc(quotesDocRef)
+        .then((doc) => {
+          const data = doc.data();
+          setAuthor(data?.author);
+          setCategory(data?.category);
+          setCommentary(data?.commentary);
+          setQuote(data?.quote);
+        })
+        .catch((error) => console.log(error));
+    } else {
+      setAuthor('');
+      setCategory('');
+      setCommentary('');
+      setQuote('');
+    }
+  }, [editId]);
 
   const handleSubmit = async () => {
     if (author === '') {
@@ -95,16 +138,38 @@ export default function AddQuoteModal({ openModal, handleClose }) {
           author: author,
           category: category,
           quote: quote,
-          commentary: commentary,
-
-          timestamp: serverTimestamp()
+          commentary: commentary
         };
 
-        await addDoc(collection(db, 'quotes'), data);
+        if (isEdit) {
+          const quotesRef = doc(db, 'quotes', editId);
+
+          updateDoc(quotesRef, data).then(() => {
+            setLoading(true);
+            handleClose();
+          });
+
+          setSuccess('Successfully edited');
+        } else {
+          await addDoc(collection(db, 'quotes'), data);
+
+          handleClose();
+
+          setSuccess('Successfully added');
+        }
+
+        setLoading(true);
 
         setSuccess('Success', 'quote uploaded successfully');
 
-        window.location.reload();
+        setTimeout(() => {
+          setSuccess('');
+          setLoading(false);
+          setAuthor('');
+          setCategory('');
+          setCommentary('');
+          setQuote('');
+        }, 300);
       } catch (error) {
         console.log('Error', `Failed to upload due to ${error}`);
 
@@ -134,7 +199,7 @@ export default function AddQuoteModal({ openModal, handleClose }) {
                 }}
               />
             </Box>
-            <Box sx={{ width: 180 }}>
+            <Box sx={{ width: 230 }}>
               <FormControl fullWidth>
                 <InputLabel id='demo-simple-select-label'>Category</InputLabel>
                 <Select
@@ -170,7 +235,7 @@ export default function AddQuoteModal({ openModal, handleClose }) {
                 id='outlined-basic'
                 label='Quote'
                 multiline
-                rows={5}
+                rows={7}
                 variant='outlined'
                 value={quote}
                 onChange={(e) => {
@@ -183,7 +248,7 @@ export default function AddQuoteModal({ openModal, handleClose }) {
                 id='outlined-basic'
                 label='commentary'
                 multiline
-                rows={5}
+                rows={7}
                 variant='outlined'
                 value={commentary}
                 onChange={(e) => {
@@ -192,14 +257,18 @@ export default function AddQuoteModal({ openModal, handleClose }) {
               />
             </Box>
           </Box>
-          <Button
-            variant='outline'
-            sx={{ display: 'block', textAlign: 'center' }}
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
-          <SubmitButton onClick={handleClose}>Cancel</SubmitButton>
+
+          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+            <SubmitButton
+              variant='outline'
+              sx={{ display: 'block', textAlign: 'center' }}
+              onClick={handleSubmit}
+            >
+              Submit
+            </SubmitButton>
+            <CancelButton onClick={handleClose}>Cancel</CancelButton>
+          </Box>
+
           {success && <Alert severity='success'>{success}</Alert>}
           {error && <Alert severity='warning'>{error}</Alert>}
         </Box>

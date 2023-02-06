@@ -1,6 +1,25 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, styled } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
+const QuotesButton = styled(Button)(({ theme }) => ({
+  color: 'white',
+  background: 'blue',
+  marginBottom: 3,
+  marginTop: 2,
+  display: 'block',
+  textAlign: 'center'
+}));
+
+const SurahsButton = styled(Button)(({ theme }) => ({
+  color: 'white',
+  background: 'darkred',
+  marginBottom: 3,
+  marginTop: 2,
+  marginLeft: 8,
+  display: 'block',
+  textAlign: 'center'
+}));
 
 const Home = () => {
   let navigate = useNavigate();
@@ -10,17 +29,17 @@ const Home = () => {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        marginY: 20
+        justifyContent: 'space-around',
+        marginY: 15
       }}
     >
       <Box>
         {' '}
-        <Button onClick={() => navigate('/surah')}>Surahs</Button>
+        <SurahsButton onClick={() => navigate('/surah')}>Surahs</SurahsButton>
       </Box>
       <Box>
         {' '}
-        <Button onClick={() => navigate('/quotes')}>Quotes</Button>
+        <QuotesButton onClick={() => navigate('/quotes')}>Quotes</QuotesButton>
       </Box>
     </Box>
   );

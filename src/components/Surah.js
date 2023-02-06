@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getDocs } from 'firebase/firestore';
-import { surahCol } from '../firebase';
+
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ function Surah() {
   const getData = async () => {
     try {
       let surahList = [];
-      const querySnapshot = await getDocs(surahCol);
+      const querySnapshot = await getDocs('');
       querySnapshot.forEach((doc) => {
         // console.log(doc.id, ' => ', doc.data());
         surahList.push({ id: doc.id, data: doc.data() });
