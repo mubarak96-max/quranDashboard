@@ -20,6 +20,7 @@ import {
   updateDoc
 } from 'firebase/firestore';
 import { db } from '../firebase';
+import Swal from 'sweetalert2';
 
 const SubmitButton = styled(Button)(({ theme }) => ({
   color: 'white',
@@ -161,6 +162,14 @@ export default function AddQuoteModal({
         setLoading(true);
 
         setSuccess('Success', 'quote uploaded successfully');
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Operation successful',
+          text: `Quote has been successfully ${isEdit ? 'edited' : 'created'}`,
+          confirmButtonColor: '#16a34a',
+          confirmButtonText: 'Ok'
+        });
 
         setTimeout(() => {
           setSuccess('');

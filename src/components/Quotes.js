@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import { db } from '../firebase';
 import AddQuoteModal from './addQuoteModal';
 import ConfirmDeleteModal from './confirmDelete';
+// import { FaArrowCircleUp } from 'react-icons/fa';
 
 const AddButton = styled(Button)(({ theme }) => ({
   color: 'white',
@@ -43,6 +44,28 @@ const Quotes = () => {
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editId, setEditId] = useState('');
+
+  const [visible, setVisible] = useState(false);
+
+  const toggleVisible = () => {
+    const scrolled = document.documentElement.scrollTop;
+    if (scrolled > 300) {
+      setVisible(true);
+    } else if (scrolled <= 300) {
+      setVisible(false);
+    }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+      /* you can also use 'auto' behaviour
+         in place of 'smooth' */
+    });
+  };
+
+  window.addEventListener('scroll', toggleVisible);
 
   const getData = async () => {
     try {
@@ -123,6 +146,29 @@ const Quotes = () => {
         }}
       >
         <Box>
+          {/* <Button>
+            <FaArrowCircleUp
+              onClick={scrollToTop}
+              style={{ display: visible ? 'inline' : 'none' }}
+            />
+          </Button> */}
+          <button
+            onClick={() => {
+              window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+            }}
+            style={{
+              position: 'fixed',
+              padding: '1rem 2rem',
+              fontSize: '20px',
+              bottom: '40px',
+              right: '40px',
+              backgroundColor: '#0C9',
+              color: '#fff',
+              textAlign: 'center'
+            }}
+          >
+            Scroll to top
+          </button>
           {quotes?.map((quote, index) => (
             <Card
               sx={{
