@@ -35,7 +35,8 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4
+  p: 4,
+  scrollY: 'scroll'
 };
 
 export default function AddSurahModal({
@@ -52,6 +53,9 @@ export default function AddSurahModal({
   const [surahName, setSurahName] = useState('');
   const [fileSize, setFileSize] = useState(null);
   const [surahIndex, setSurahIndex] = useState(null);
+
+  const [location, setLocation] = useState('');
+  const [verses, setVerses] = useState(null);
 
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState('');
@@ -70,6 +74,8 @@ export default function AddSurahModal({
           setSurahName(data?.surahName);
           setSurahIndex(data?.surahIndex);
           setFileSize(data?.fileSize);
+          setLocation(data?.location);
+          setVerses(data?.verses);
         })
         .catch((error) => console.log(error));
     } else {
@@ -80,6 +86,8 @@ export default function AddSurahModal({
       setSurahName('');
       setSurahIndex(null);
       setFileSize(null);
+      setLocation('');
+      setVerses(null);
     }
   }, [editId]);
 
@@ -95,6 +103,9 @@ export default function AddSurahModal({
     } else if (isNaN(surahIndex)) {
       console.log(showError);
       setError('surah index should be number');
+      setShowError(true);
+    } else if (isNaN(verses)) {
+      setError('verses should be number');
       setShowError(true);
     } else if (fileSize === null) {
       console.log(showError);
@@ -126,7 +137,9 @@ export default function AddSurahModal({
           surahName,
           englishName,
           lugandaName,
-          fileSize: Number(fileSize)
+          fileSize: Number(fileSize),
+          verses: Number(verses),
+          location
         };
 
         if (isEdit) {
@@ -168,6 +181,8 @@ export default function AddSurahModal({
           setSurahName('');
           setSurahIndex(null);
           setFileSize(null);
+          setLocation('');
+          setVerses(null);
         }, 300);
       } catch (error) {
         console.log('Error', `Failed to upload due to ${error}`);
@@ -245,7 +260,29 @@ export default function AddSurahModal({
               />
             </Box>
 
-            <Box sx={{ marginY: 2 }}> </Box>
+            <Box sx={{ marginY: 2, display: 'flex', flexDirection: 'row' }}>
+              {' '}
+              <TextField
+                fullWidth
+                id='outlined-basic'
+                label='Number of verses'
+                variant='outlined'
+                value={verses}
+                onChange={(e) => {
+                  setVerses(e.target.value);
+                }}
+              />
+              <TextField
+                fullWidth
+                id='outlined-basic'
+                label='Location'
+                variant='outlined'
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value);
+                }}
+              />
+            </Box>
 
             <Box sx={{ marginY: 2 }}>
               {' '}

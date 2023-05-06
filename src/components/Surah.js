@@ -214,6 +214,17 @@ const Surah = () => {
                 <Typography gutterBottom variant='h6'>
                   Audio URL: {'   '} {surah?.data?.audioURL}
                 </Typography>
+                <Typography gutterBottom variant='h6'>
+                  Location: {'   '} {surah?.data?.location}
+                </Typography>
+
+                <Typography gutterBottom variant='h6'>
+                  Verses: {'   '} {surah?.data?.verses}
+                </Typography>
+                <Typography gutterBottom variant='h6' sx={{ marginTop: 1 }}>
+                  File size: {'   '}
+                  {surah?.data?.fileSize} Mbs
+                </Typography>
                 <Typography
                   gutterBottom
                   variant='p'
@@ -222,10 +233,6 @@ const Surah = () => {
                 >
                   Description: {'   '}
                   {surah?.data?.description}
-                </Typography>
-                <Typography gutterBottom variant='h6' sx={{ marginTop: 1 }}>
-                  File size: {'   '}
-                  {surah?.data?.fileSize} Mbs
                 </Typography>
               </CardContent>
               <CardActionArea>
@@ -238,7 +245,7 @@ const Surah = () => {
                       setOpenModal(true);
                     }}
                   >
-                    <div className='flex  space-x-1 w-fit items-center px-3 rounded-md py-2 hover:text-white hover:bg-green-700 hover:cursor-pointer  text-green-500 border border-green-500'>
+                    <div className='flex items-center px-3 py-2 space-x-1 text-green-500 border border-green-500 rounded-md w-fit hover:text-white hover:bg-green-700 hover:cursor-pointer'>
                       Edit
                     </div>
                   </Button>
@@ -249,7 +256,7 @@ const Surah = () => {
                       setDeleteId(surah?.id);
                     }}
                   >
-                    <div className='flex  space-x-1 w-fit items-center px-3 rounded-md py-2 hover:text-white hover:bg-red-700 hover:cursor-pointer  text-red-500 border border-red-500'>
+                    <div className='flex items-center px-3 py-2 space-x-1 text-red-500 border border-red-500 rounded-md w-fit hover:text-white hover:bg-red-700 hover:cursor-pointer'>
                       Delete
                     </div>
                   </Button>
