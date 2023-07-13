@@ -55,6 +55,14 @@ const Home = () => {
           </div>
         </Button>
       </Box>
+
+      <Box>
+        <Button size='large' onClick={() => navigate('/books')}>
+          <div className='flex items-center px-3 py-2 space-x-1 text-white bg-black border border-green-500 rounded-md w-fit hover:text-black hover:bg-white hover:cursor-pointer'>
+            Books
+          </div>
+        </Button>
+      </Box>
     </Box>
   );
 };

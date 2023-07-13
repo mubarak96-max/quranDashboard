@@ -11,10 +11,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { db } from '../firebase';
-import SingleAudio from './Audio';
-import AudioModal from './AudioModal';
+import Book from './Book';
+import BooksModal from './BooksModal';
 
-const Audios = () => {
+const Books = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ const Audios = () => {
       setShowLoader(true);
       let arr = [];
 
-      const promsRef = collection(db, 'Audios');
+      const promsRef = collection(db, 'Books');
 
       const q = query(promsRef, orderBy('createdAt', 'desc'));
 
@@ -67,9 +67,9 @@ const Audios = () => {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteDoc(doc(db, 'Audios', iDToDelete)).then(() => {
+        deleteDoc(doc(db, 'Books', iDToDelete)).then(() => {
           setLoading(true);
-          Swal.fire('Deleted!', 'Audio has been deleted.', 'success');
+          Swal.fire('Deleted!', 'Book has been deleted.', 'success');
         });
       }
 
@@ -99,14 +99,14 @@ const Audios = () => {
         }}
       >
         <div className='flex items-center px-3 py-2 space-x-1 text-white bg-blue-500 border border-green-500 rounded-md w-fit hover:text-blue-500 hover:bg-white hover:cursor-pointer'>
-          Add Audio
+          Add Book
         </div>
       </Button>
 
-      <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3 lg:gap-2'>
+      <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3 lg:gap-2 mt-8'>
         {promotions?.map((video) => (
-          <div className='h-[280px] flex items-center' key={video?.id}>
-            <SingleAudio
+          <div className='h-[320px] flex items-center' key={video?.id}>
+            <Book
               video={video}
               editVideo={editVideo}
               deleteVideo={deleteVideo}
@@ -130,7 +130,7 @@ const Audios = () => {
         </Box>
       )}
 
-      <AudioModal
+      <BooksModal
         openModal={openModal}
         closeModal={() => setOpenModal(false)}
         isEdit={isEdit}
@@ -141,4 +141,4 @@ const Audios = () => {
   );
 };
 
-export default Audios;
+export default Books;
