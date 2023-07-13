@@ -27,19 +27,33 @@ const Home = () => {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'space-around',
+        justifyContent: 'center',
         marginY: 15
       }}
     >
       <Box>
-        {' '}
-        <SurahsButton onClick={() => navigate('/surah')}>Surahs</SurahsButton>
+        <Button size='large' onClick={() => navigate('/quotes')}>
+          <div className='flex items-center px-3 py-2 space-x-1 text-white bg-blue-500 border border-green-500 rounded-md w-fit hover:text-blue-500 hover:bg-white hover:cursor-pointer'>
+            Qoutes
+          </div>
+        </Button>
       </Box>
       <Box>
-        {' '}
-        <QuotesButton onClick={() => navigate('/quotes')}>Quotes</QuotesButton>
+        <Button size='large' onClick={() => navigate('/surahs')}>
+          <div className='flex items-center px-3 py-2 space-x-1 text-white bg-red-500 border border-green-500 rounded-md w-fit hover:text-red-500 hover:bg-white hover:cursor-pointer'>
+            Surahs
+          </div>
+        </Button>
+      </Box>
+
+      <Box>
+        <Button size='large' onClick={() => navigate('/audios')}>
+          <div className='flex items-center px-3 py-2 space-x-1 text-white bg-orange-500 border border-green-500 rounded-md w-fit hover:text-orange-500 hover:bg-white hover:cursor-pointer'>
+            Audios
+          </div>
+        </Button>
       </Box>
     </Box>
   );
