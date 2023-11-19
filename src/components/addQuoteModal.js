@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
+import React, { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
 import {
   Alert,
   FormControl,
@@ -10,7 +10,7 @@ import {
   Select,
   styled,
   TextField
-} from '@mui/material';
+} from "@mui/material";
 import {
   addDoc,
   collection,
@@ -18,65 +18,65 @@ import {
   getDoc,
   serverTimestamp,
   updateDoc
-} from 'firebase/firestore';
-import { db } from '../firebase';
-import Swal from 'sweetalert2';
+} from "firebase/firestore";
+import { db } from "../firebase";
+import Swal from "sweetalert2";
 
 const SubmitButton = styled(Button)(({ theme }) => ({
-  color: 'white',
-  background: 'blue',
+  color: "white",
+  background: "blue",
   marginBottom: 3,
   marginTop: 2,
-  display: 'block',
-  textAlign: 'center'
+  display: "block",
+  textAlign: "center"
 }));
 
 const CancelButton = styled(Button)(({ theme }) => ({
-  color: 'white',
-  background: 'red',
+  color: "white",
+  background: "red",
   marginBottom: 3,
   marginTop: 2,
   marginLeft: 8,
-  display: 'block',
-  textAlign: 'center'
+  display: "block",
+  textAlign: "center"
 }));
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4
 };
 
 const categories = [
   {
-    id: '12s',
-    category: 'mental strength'
+    id: "12s",
+    category: "mental strength"
   },
   {
-    id: '1bs',
-    category: 'spirituality'
+    id: "1bs",
+    category: "spirituality"
   },
   {
-    id: '1cs',
-    category: 'morality'
+    id: "1cs",
+    category: "morality"
   },
   {
-    id: '1ls',
-    category: 'love and relationships'
+    id: "1ls",
+    category: "love and relationships"
   },
   {
-    id: '1s',
-    category: 'finance'
+    id: "1s",
+    category: "finance"
   },
   {
-    id: '9qs',
-    category: 'self control'
+    id: "9qs",
+    category: "self control"
   }
 ];
 
@@ -87,100 +87,88 @@ export default function AddQuoteModal({
   editId,
   setLoading
 }) {
-  const [author, setAuthor] = useState('');
-  const [category, setCategory] = useState('');
-  const [commentary, setCommentary] = useState('');
-  const [quote, setQuote] = useState('');
+  const [author, setAuthor] = useState("");
+
+  const [quote, setQuote] = useState("");
 
   const [showError, setShowError] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     if (isEdit) {
-      const quotesDocRef = doc(db, 'quotes', editId);
+      const quotesDocRef = doc(db, "quotes", editId);
       getDoc(quotesDocRef)
         .then((doc) => {
           const data = doc.data();
           setAuthor(data?.author);
-          setCategory(data?.category);
-          setCommentary(data?.commentary);
+
           setQuote(data?.quote);
         })
         .catch((error) => console.log(error));
     } else {
-      setAuthor('');
-      setCategory('');
-      setCommentary('');
-      setQuote('');
+      setAuthor("");
+
+      setQuote("");
     }
   }, [editId]);
 
   const handleSubmit = async () => {
-    if (author === '') {
+    if (author === "") {
       console.log(showError);
-      setError('author is required');
+      setError("author is required");
       setShowError(true);
-    } else if (category === '') {
-      console.log('fill in the luganda name');
-      setError('fill in the category');
-      setShowError(true);
-    } else if (commentary === '') {
-      console.log('fill in the name');
-      setError('fill in the commentary');
-      setShowError(true);
-    } else if (quote === '') {
-      console.log('provide the audio url');
-      setError('provide the quote');
+    } else if (quote === "") {
+      console.log("provide the audio url");
+      setError("provide the quote");
       setShowError(true);
     } else {
       try {
         const data = {
           author: author,
-          category: category,
-          quote: quote,
-          commentary: commentary
+
+          quote: quote
         };
 
         if (isEdit) {
-          const quotesRef = doc(db, 'quotes', editId);
+          const quotesRef = doc(db, "quotes", editId);
 
           updateDoc(quotesRef, data).then(() => {
             setLoading(true);
             handleClose();
           });
 
-          setSuccess('Successfully edited');
+          setSuccess("Successfully edited");
         } else {
-          await addDoc(collection(db, 'quotes'), data);
+          await addDoc(collection(db, "quotes"), data);
 
           handleClose();
 
-          setSuccess('Successfully added');
+          setSuccess("Successfully added");
         }
 
         setLoading(true);
 
-        setSuccess('Success', 'quote uploaded successfully');
+        setSuccess("Success", "quote uploaded successfully");
 
         Swal.fire({
-          icon: 'success',
-          title: 'Operation successful',
-          text: `Quote has been successfully ${isEdit ? 'edited' : 'created'}`,
-          confirmButtonColor: '#16a34a',
-          confirmButtonText: 'Ok'
+          icon: "success",
+          title: "Operation successful",
+          text: `Quote has been successfully ${isEdit ? "edited" : "created"}`,
+          confirmButtonColor: "#16a34a",
+          confirmButtonText: "Ok"
         });
 
         setTimeout(() => {
-          setSuccess('');
+          setSuccess("");
           setLoading(false);
-          setAuthor('');
-          setCategory('');
-          setCommentary('');
-          setQuote('');
+          setAuthor("");
+          setCategory("");
+          setCommentary("");
+          setQuote("");
         }, 300);
       } catch (error) {
-        console.log('Error', `Failed to upload due to ${error}`);
+        console.log("Error", `Failed to upload due to ${error}`);
 
         // setLoading(false);
       }
@@ -191,86 +179,43 @@ export default function AddQuoteModal({
       <Modal
         open={openModal}
         onClose={handleClose}
-        aria-labelledby='modal-modal-title'
-        aria-describedby='modal-modal-description'
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
           <Box>
             <Box sx={{ marginY: 2 }}>
-              {' '}
+              {" "}
               <TextField
-                id='outlined-basic'
-                label='Author'
-                variant='outlined'
+                id="outlined-basic"
+                label="Author"
+                variant="outlined"
                 value={author}
                 onChange={(e) => {
                   setAuthor(e.target.value);
                 }}
               />
             </Box>
-            <Box sx={{ width: 230 }}>
-              <FormControl fullWidth>
-                <InputLabel id='demo-simple-select-label'>Category</InputLabel>
-                <Select
-                  labelId='demo-simple-select-label'
-                  id='demo-simple-select'
-                  sx={{
-                    height: 30,
-                    width: 150,
-                    display: 'flex',
-                    alignItems: 'center',
-                    paddingX: 4,
-                    paddingY: 2,
-                    marginY: 2
-                  }}
-                >
-                  {categories?.map((item) => (
-                    <MenuItem
-                      key={item.id}
-                      value={item.category}
-                      onClick={() => {
-                        // console.log();
-                        setCategory(item.category);
-                      }}
-                    >
-                      {item.category}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+
             <Box sx={{ marginY: 2 }}>
               <TextField
-                id='outlined-basic'
-                label='Quote'
+                id="outlined-basic"
+                label="Quote"
                 multiline
                 rows={7}
-                variant='outlined'
+                variant="outlined"
                 value={quote}
                 onChange={(e) => {
                   setQuote(e.target.value);
                 }}
               />
             </Box>
-            <Box sx={{ marginY: 2 }}>
-              <TextField
-                id='outlined-basic'
-                label='commentary'
-                multiline
-                rows={7}
-                variant='outlined'
-                value={commentary}
-                onChange={(e) => {
-                  setCommentary(e.target.value);
-                }}
-              />
-            </Box>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+          <Box sx={{ display: "flex", flexDirection: "row" }}>
             <SubmitButton
-              variant='outline'
-              sx={{ display: 'block', textAlign: 'center' }}
+              variant="outline"
+              sx={{ display: "block", textAlign: "center" }}
               onClick={handleSubmit}
             >
               Submit
@@ -278,8 +223,8 @@ export default function AddQuoteModal({
             <CancelButton onClick={handleClose}>Cancel</CancelButton>
           </Box>
 
-          {success && <Alert severity='success'>{success}</Alert>}
-          {error && <Alert severity='warning'>{error}</Alert>}
+          {success && <Alert severity="success">{success}</Alert>}
+          {error && <Alert severity="warning">{error}</Alert>}
         </Box>
       </Modal>
     </div>
