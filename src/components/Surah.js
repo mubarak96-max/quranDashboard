@@ -7,7 +7,7 @@ import {
   CardContent,
   styled,
   Typography
-} from '@mui/material';
+} from "@mui/material";
 import {
   collection,
   deleteDoc,
@@ -15,32 +15,32 @@ import {
   getDocs,
   orderBy,
   query
-} from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import { db } from '../firebase';
-import AddSurahModal from './AddSurahModal';
-import ConfirmDeleteModal from './confirmDelete';
+} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { db } from "../firebase";
+import AddSurahModal from "./AddSurahModal";
+import ConfirmDeleteModal from "./confirmDelete";
 // import { FaArrowCircleUp } from 'react-icons/fa';
 
 const AddButton = styled(Button)(({ theme }) => ({
-  color: 'white',
-  background: 'blue',
+  color: "white",
+  background: "blue",
   marginBottom: 3,
   marginTop: 2,
-  display: 'block',
-  textAlign: 'center'
+  display: "block",
+  textAlign: "center"
 }));
 
 const HomeButton = styled(Button)(({ theme }) => ({
-  color: 'white',
-  background: 'darkred',
+  color: "white",
+  background: "darkred",
   marginBottom: 3,
   marginTop: 2,
   marginLeft: 8,
-  display: 'block',
-  textAlign: 'center'
+  display: "block",
+  textAlign: "center"
 }));
 
 const Surah = () => {
@@ -48,12 +48,17 @@ const Surah = () => {
   const [loading, setLoading] = useState(false);
   const [quotes, setQuotes] = useState([]);
   const [surahs, setSurahs] = useState([]);
-  const [deleteId, setDeleteId] = useState('');
+  const [deleteId, setDeleteId] = useState("");
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [editId, setEditId] = useState('');
+  const [editId, setEditId] = useState("");
+  const [showMore, setShowMore] = useState(false);
 
   const [visible, setVisible] = useState(false);
+
+  const toggleDescription = () => {
+    setShowMore(!showMore);
+  };
 
   const toggleVisible = () => {
     const scrolled = document.documentElement.scrollTop;
@@ -67,21 +72,21 @@ const Surah = () => {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth"
       /* you can also use 'auto' behaviour
          in place of 'smooth' */
     });
   };
 
-  window.addEventListener('scroll', toggleVisible);
+  window.addEventListener("scroll", toggleVisible);
 
   const getData = async () => {
     try {
       let surahsArr = [];
 
-      const surahsRef = collection(db, 'surah');
+      const surahsRef = collection(db, "surah");
 
-      const q = query(surahsRef, orderBy('surahIndex', 'asc'));
+      const q = query(surahsRef, orderBy("surahIndex", "asc"));
 
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
@@ -90,9 +95,9 @@ const Surah = () => {
       });
       setSurahs([...surahsArr]);
       //   console.log('quotesArr', quotesArr);
-      console.log('quotes', surahs);
+      console.log("quotes", surahs);
     } catch (error) {
-      console.log('error', error.message);
+      console.log("error", error.message);
     }
   };
 
@@ -103,20 +108,20 @@ const Surah = () => {
   let navigate = useNavigate();
 
   const deleteQuote = (deleteId) => {
-    deleteDoc(doc(db, 'surah', deleteId))
+    deleteDoc(doc(db, "surah", deleteId))
       .then(() => {
         setLoading(true);
         setOpenConfirmDeleteModal(false);
         setTimeout(() => {
           setLoading(false);
-          setDeleteId('');
+          setDeleteId("");
         }, 1000);
         Swal.fire({
-          icon: 'success',
-          title: 'Operation successful',
-          text: 'The service has been successfully deleted',
-          confirmButtonColor: '#16a34a',
-          confirmButtonText: 'Ok'
+          icon: "success",
+          title: "Operation successful",
+          text: "The service has been successfully deleted",
+          confirmButtonColor: "#16a34a",
+          confirmButtonText: "Ok"
         });
       })
       .catch((error) => {
@@ -128,11 +133,11 @@ const Surah = () => {
     <>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
+          display: "flex",
+          flexDirection: "row",
           marginY: 2,
-          justifyContent: 'center',
-          alignItems: 'center'
+          justifyContent: "center",
+          alignItems: "center"
         }}
       >
         <AddButton
@@ -143,16 +148,16 @@ const Surah = () => {
         >
           Add Surah
         </AddButton>
-        <HomeButton onClick={() => navigate('/')}>Back Home</HomeButton>
+        <HomeButton onClick={() => navigate("/")}>Back Home</HomeButton>
       </Box>
 
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'row'
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "row"
         }}
       >
         <Box>
@@ -164,17 +169,17 @@ const Surah = () => {
           </Button> */}
           <button
             onClick={() => {
-              window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+              window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
             }}
             style={{
-              position: 'fixed',
-              padding: '1rem 2rem',
-              fontSize: '20px',
-              bottom: '40px',
-              right: '40px',
-              backgroundColor: '#0C9',
-              color: '#fff',
-              textAlign: 'center'
+              position: "fixed",
+              padding: "1rem 2rem",
+              fontSize: "20px",
+              bottom: "40px",
+              right: "40px",
+              backgroundColor: "#0C9",
+              color: "#fff",
+              textAlign: "center"
             }}
           >
             Scroll to top
@@ -187,76 +192,87 @@ const Surah = () => {
                 marginRight: 5,
                 marginBottom: 5,
                 marginX: 2,
-                border: '2px solid lightblue',
-                overflowY: 'scroll'
+                border: "2px solid lightblue",
+                overflowY: "scroll"
               }}
             >
               <CardContent
                 sx={{
-                  overflow: 'hidden',
-                  overflowY: 'scroll',
-                  overflowX: 'hidden'
+                  overflow: "hidden",
+                  overflowY: "scroll",
+                  overflowX: "hidden"
                 }}
               >
-                <Typography gutterBottom variant='h6' component='div'>
+                <Typography gutterBottom variant="h6" component="div">
                   Number: {surah?.data?.surahIndex}
                 </Typography>
-                <Typography gutterBottom variant='h6'>
+                <Typography gutterBottom variant="h6">
                   Surah: {surah?.data?.surahName}
                 </Typography>
 
-                <Typography variant='h6'>
-                  Luganda Name: {'   '} {surah?.data?.lugandaName}
+                <Typography variant="h6">
+                  Luganda Name: {"   "} {surah?.data?.lugandaName}
                 </Typography>
-                <Typography gutterBottom variant='h6'>
-                  English Name: {'   '} {surah?.data?.englishName}
+                <Typography gutterBottom variant="h6">
+                  English Name: {"   "} {surah?.data?.englishName}
                 </Typography>
-                <Typography gutterBottom variant='h6'>
-                  Audio URL: {'   '} {surah?.data?.audioURL}
+                <Typography gutterBottom variant="h6">
+                  Audio URL: {"   "} {surah?.data?.audioURL}
                 </Typography>
-                <Typography gutterBottom variant='h6'>
-                  Location: {'   '} {surah?.data?.location}
+                <Typography gutterBottom variant="h6">
+                  Location: {"   "} {surah?.data?.location}
                 </Typography>
 
-                <Typography gutterBottom variant='h6'>
-                  Verses: {'   '} {surah?.data?.verses}
+                <Typography gutterBottom variant="h6">
+                  Verses: {"   "} {surah?.data?.verses}
                 </Typography>
-                <Typography gutterBottom variant='h6' sx={{ marginTop: 1 }}>
-                  File size: {'   '}
+                <Typography gutterBottom variant="h6" sx={{ marginTop: 1 }}>
+                  File size: {"   "}
                   {surah?.data?.fileSize} Mbs
                 </Typography>
+
                 <Typography
                   gutterBottom
-                  variant='p'
-                  component='div'
+                  variant="p"
+                  component="div"
                   sx={{ marginTop: 1 }}
                 >
-                  Description: {'   '}
-                  {surah?.data?.description}
+                  Description: {"   "}
+                  {showMore
+                    ? surah?.data?.description
+                    : surah?.data?.description?.slice(0, 40)}
+                  {surah?.data?.description?.length > 40 && (
+                    <button
+                      className="pb-1 text-blue-600 underline"
+                      onClick={toggleDescription}
+                    >
+                      {showMore ? "See less" : "See more"}
+                    </button>
+                  )}
                 </Typography>
               </CardContent>
               <CardActionArea>
                 <CardActions>
                   <Button
-                    size='small'
+                    size="small"
                     onClick={() => {
                       setIsEdit(true);
                       setEditId(surah?.id);
                       setOpenModal(true);
                     }}
                   >
-                    <div className='flex items-center px-3 py-2 space-x-1 text-green-500 border border-green-500 rounded-md w-fit hover:text-white hover:bg-green-700 hover:cursor-pointer'>
+                    <div className="flex items-center px-3 py-2 space-x-1 text-green-500 border border-green-500 rounded-md w-fit hover:text-white hover:bg-green-700 hover:cursor-pointer">
                       Edit
                     </div>
                   </Button>
                   <Button
-                    size='small'
+                    size="small"
                     onClick={() => {
                       setOpenConfirmDeleteModal(true);
                       setDeleteId(surah?.id);
                     }}
                   >
-                    <div className='flex items-center px-3 py-2 space-x-1 text-red-500 border border-red-500 rounded-md w-fit hover:text-white hover:bg-red-700 hover:cursor-pointer'>
+                    <div className="flex items-center px-3 py-2 space-x-1 text-red-500 border border-red-500 rounded-md w-fit hover:text-white hover:bg-red-700 hover:cursor-pointer">
                       Delete
                     </div>
                   </Button>
