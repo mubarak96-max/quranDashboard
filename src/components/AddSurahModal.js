@@ -346,7 +346,7 @@ export default function AddSurahModal({
             </Box>
 
             <Box sx={{ marginY: 1 }}>
-              {/* <TextField
+              <TextField
                 fullWidth
                 id="outlined-basic"
                 label="Audio URL"
@@ -355,15 +355,15 @@ export default function AddSurahModal({
                 onChange={(e) => {
                   setAudioURL(e.target.value);
                 }}
-              /> */}
+              />
 
-              <Box sx={{ marginY: 2 }}>
+              {/* <Box sx={{ marginY: 2 }}>
                 <InputLabel sx={{ marginBottom: 1, fontWeight: "600" }}>
                   Quran File
                 </InputLabel>
                 <div>
                   <div className="grid gap-5">
-                    {/* <label htmlFor='name'>Add Banner Image</label> */}
+                  
 
                     <input
                       onChange={(e) => handleUpload(e)}
@@ -400,7 +400,7 @@ export default function AddSurahModal({
                     </div>
                   )}
                 </div>
-              </Box>
+              </Box> */}
             </Box>
 
             <Box sx={{ marginY: 1 }}>
@@ -411,7 +411,7 @@ export default function AddSurahModal({
                 variant="outlined"
                 value={description}
                 multiline
-                maxRows={5}
+                maxRows={6}
                 onChange={(e) => {
                   setDescription(e.target.value);
                 }}
