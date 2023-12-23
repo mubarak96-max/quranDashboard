@@ -357,14 +357,12 @@ export default function AddSurahModal({
                 }}
               />
 
-              {/* <Box sx={{ marginY: 2 }}>
+              <Box sx={{ marginY: 2 }}>
                 <InputLabel sx={{ marginBottom: 1, fontWeight: "600" }}>
                   Quran File
                 </InputLabel>
                 <div>
                   <div className="grid gap-5">
-                  
-
                     <input
                       onChange={(e) => handleUpload(e)}
                       className="px-4 py-2 focus:border focus:border-blue-500"
@@ -400,7 +398,7 @@ export default function AddSurahModal({
                     </div>
                   )}
                 </div>
-              </Box> */}
+              </Box>
             </Box>
 
             <Box sx={{ marginY: 1 }}>
