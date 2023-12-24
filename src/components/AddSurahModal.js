@@ -409,7 +409,7 @@ export default function AddSurahModal({
                 variant="outlined"
                 value={description}
                 multiline
-                maxRows={6}
+                maxRows={4}
                 onChange={(e) => {
                   setDescription(e.target.value);
                 }}
