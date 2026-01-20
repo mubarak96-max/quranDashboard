@@ -1,50 +1,34 @@
 import React, { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
-import {
-  Alert,
-  CircularProgress,
-  InputLabel,
-  styled,
-  TextField
-} from "@mui/material";
+import { CircularProgress, TextField } from "@mui/material";
+import { motion, AnimatePresence } from "framer-motion";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "../firebase";
+import { X, Upload, Save, FileAudio, Layout, Hash, Type, MapPin, List } from 'lucide-react';
 import Swal from "sweetalert2";
 
-const SubmitButton = styled(Button)(({ theme }) => ({
-  color: "white",
-  background: "blue",
-  marginBottom: 3,
-  marginTop: 2,
-  display: "block",
-  textAlign: "center"
-}));
-
-const CancelButton = styled(Button)(({ theme }) => ({
-  color: "white",
-  background: "red",
-  marginBottom: 3,
-  marginTop: 2,
-  marginLeft: 8,
-  display: "block",
-  textAlign: "center"
-}));
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 380,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-  scrollY: "scroll"
-};
+const CustomTextField = ({ ...props }) => (
+  <TextField
+    fullWidth
+    variant="outlined"
+    size="small"
+    {...props}
+    sx={{
+      "& .MuiOutlinedInput-root": {
+        color: "white",
+        backgroundColor: "rgba(255,255,255,0.03)",
+        borderRadius: "12px",
+        "& fieldset": { borderColor: "rgba(255,255,255,0.1)" },
+        "&:hover fieldset": { borderColor: "rgba(16, 185, 129, 0.5)" },
+        "&.Mui-focused fieldset": { borderColor: "#10b981" },
+      },
+      "& .MuiInputLabel-root": { color: "#71717a" },
+      "& .MuiInputLabel-root.Mui-focused": { color: "#10b981" },
+      ...props.sx
+    }}
+  />
+);
 
 export default function AddSurahModal({
   openModal,
@@ -62,33 +46,30 @@ export default function AddSurahModal({
   const [englishName, setEnglishName] = useState("");
   const [lugandaName, setLugandaName] = useState("");
   const [surahName, setSurahName] = useState("");
-  const [fileSize, setFileSize] = useState(null);
-  const [surahIndex, setSurahIndex] = useState(null);
+  const [fileSize, setFileSize] = useState("");
+  const [surahIndex, setSurahIndex] = useState("");
 
   const [location, setLocation] = useState("");
-  const [verses, setVerses] = useState(null);
+  const [verses, setVerses] = useState("");
 
-  const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    if (isEdit) {
+    if (isEdit && editId) {
       const surahDocRef = doc(db, "surah", editId);
       getDoc(surahDocRef)
         .then((doc) => {
           const data = doc.data();
-          setAudioURL(data?.audioURL);
-          setDescription(data?.description);
-          setEnglishName(data?.englishName);
-          setLugandaName(data?.lugandaName);
-          setSurahName(data?.surahName);
-          setSurahIndex(data?.surahIndex);
-          setFileSize(data?.fileSize);
-          setLocation(data?.location);
-          setVerses(data?.verses);
-
-          setAudioName(data?.audioName);
+          setAudioURL(data?.audioURL || "");
+          setDescription(data?.description || "");
+          setEnglishName(data?.englishName || "");
+          setLugandaName(data?.lugandaName || "");
+          setSurahName(data?.surahName || "");
+          setSurahIndex(data?.surahIndex || "");
+          setFileSize(data?.fileSize || "");
+          setLocation(data?.location || "");
+          setVerses(data?.verses || "");
+          setAudioName(data?.audioName || "");
         })
         .catch((error) => console.log(error));
     } else {
@@ -97,19 +78,16 @@ export default function AddSurahModal({
       setEnglishName("");
       setLugandaName("");
       setSurahName("");
-      setSurahIndex(null);
-      setFileSize(null);
+      setSurahIndex("");
+      setFileSize("");
       setLocation("");
-      setVerses(null);
-
+      setVerses("");
       setAudioName("");
-      setUploadProgress(null);
+      setUploadProgress(0);
     }
-  }, [editId]);
+  }, [editId, isEdit, openModal]);
 
   const handleUpload = (e) => {
-    e.preventDefault();
-
     const file = e.target.files[0];
     if (!file) return;
 
@@ -126,7 +104,7 @@ export default function AddSurahModal({
         setUploading(true);
       },
       (error) => {
-        alert(error);
+        setError(error.message);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -137,302 +115,250 @@ export default function AddSurahModal({
     );
   };
 
-  console.log("surah name", audioName);
-  console.log("surah url", audioURL);
-  console.log("progress", uploadProgress);
-  console.log("upload", uploading);
-
   const handleSubmit = async () => {
-    if (audioURL === "") {
-      console.log(showError);
-      setError("audio url is required");
-      setShowError(true);
-    } else if (surahIndex === null) {
-      console.log(showError);
-      setError("surah index is required");
-      setShowError(true);
-    } else if (isNaN(surahIndex)) {
-      console.log(showError);
-      setError("surah index should be number");
-      setShowError(true);
-    } else if (isNaN(verses)) {
-      setError("verses should be number");
-      setShowError(true);
-    } else if (fileSize === null) {
-      console.log(showError);
-      setError("file size is required");
-      setShowError(true);
-    } else if (isNaN(fileSize)) {
-      console.log(showError);
-      setError("file size should be number");
-      setShowError(true);
-    } else if (surahName === "") {
-      console.log(showError);
-      setError("surah name is required");
-      setShowError(true);
-    } else if (description === "") {
-      setError("fill in the description");
-      setShowError(true);
-    } else if (englishName === "") {
-      setError("fill in the english name");
-      setShowError(true);
-    } else if (lugandaName === "") {
-      setError("provide the luganda name");
-      setShowError(true);
-    } else {
-      try {
-        const data = {
-          audioURL,
-          description,
-          surahIndex: Number(surahIndex),
-          surahName,
-          englishName,
-          lugandaName,
-          fileSize: Number(fileSize),
-          verses: Number(verses),
-          location,
-          audioName
-        };
+    if (!audioURL || !surahIndex || !surahName || !description || !englishName || !lugandaName) {
+      Swal.fire({
+        icon: "error",
+        title: "Missing Fields",
+        text: "Please fill in all required fields",
+        background: "#171717",
+        color: "#fff"
+      });
+      return;
+    }
 
-        if (isEdit) {
-          const surahRef = doc(db, "surah", editId);
+    try {
+      const data = {
+        audioURL,
+        description,
+        surahIndex: Number(surahIndex),
+        surahName,
+        englishName,
+        lugandaName,
+        fileSize: Number(fileSize),
+        verses: Number(verses),
+        location,
+        audioName
+      };
 
-          updateDoc(surahRef, data).then(() => {
-            setLoading(true);
-            handleClose();
-          });
-
-          setSuccess("Successfully edited");
-        } else {
-          await addDoc(collection(db, "surah"), data);
-
-          handleClose();
-
-          setSuccess("Successfully added");
-        }
-
-        Swal.fire({
-          icon: "success",
-          title: "Operation successful",
-          text: `Surah has been successfully ${isEdit ? "edited" : "created"}`,
-          confirmButtonColor: "#16a34a",
-          confirmButtonText: "Ok"
-        });
-
-        setLoading(true);
-
-        setSuccess("Success", "surah uploaded successfully");
-
-        setTimeout(() => {
-          setSuccess("");
-          setLoading(false);
-          setAudioURL("");
-          setDescription("");
-          setEnglishName("");
-          setLugandaName("");
-          setSurahName("");
-          setSurahIndex(null);
-          setFileSize(null);
-          setLocation("");
-          setVerses(null);
-          setAudioName("");
-          setUploadProgress(null);
-        }, 300);
-      } catch (error) {
-        console.log("Error", `Failed to upload due to ${error}`);
-
-        // setLoading(false);
+      if (isEdit) {
+        await updateDoc(doc(db, "surah", editId), data);
+      } else {
+        await addDoc(collection(db, "surah"), data);
       }
+
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: `Surah ${isEdit ? "updated" : "added"} successfully!`,
+        background: "#171717",
+        color: "#fff",
+        confirmButtonColor: "#10b981"
+      });
+
+      if (setLoading) setLoading(false);
+      handleClose();
+    } catch (error) {
+      console.error("Error saving surah:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message,
+        background: "#171717",
+        color: "#fff"
+      });
     }
   };
+
   return (
-    <div>
-      <Modal
-        open={openModal}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+    <Modal open={openModal} onClose={handleClose} className="flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        className="w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-[3rem] shadow-2xl relative overflow-y-auto max-h-[95vh]"
       >
-        <Box sx={style}>
-          <Box>
-            <Box sx={{ marginY: 1, display: "flex", flexDirection: "row" }}>
-              {" "}
-              <TextField
-                id="outlined-basic"
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[100px] rounded-full -mr-48 -mt-48 pointer-events-none" />
+
+        {/* Header */}
+        <div className="relative z-10 px-10 py-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02] backdrop-blur-xl sticky top-0">
+          <div className="flex items-center gap-5">
+            <div className="p-4 rounded-2xl bg-primary/10 text-primary border border-primary/20">
+              <Layout className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white leading-none mb-1">
+                {isEdit ? "Update Surah" : "New Surah"}
+              </h2>
+              <p className="text-[10px] text-white/40 uppercase font-black tracking-widest">Digital Quran Registry</p>
+            </div>
+          </div>
+          <button
+            onClick={handleClose}
+            className="p-3 hover:bg-white/5 rounded-2xl transition-all text-white/40 hover:text-white"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="relative z-10 p-10 space-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <CustomTextField
                 label="Surah Index"
-                variant="outlined"
                 value={surahIndex}
-                size="small"
-                onChange={(e) => {
-                  setSurahIndex(e.target.value);
+                onChange={(e) => setSurahIndex(e.target.value)}
+                placeholder="e.g. 1"
+                InputProps={{
+                  startAdornment: <Hash className="w-4 h-4 mr-3 text-primary/50" />
                 }}
               />
-              <TextField
-                id="outlined-basic"
-                label="File Size"
-                variant="outlined"
-                value={fileSize}
-                size="small"
-                onChange={(e) => {
-                  setFileSize(e.target.value);
-                }}
-              />
-            </Box>
-
-            <Box sx={{ marginY: 1 }}>
-              {" "}
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="Surah Name"
-                variant="outlined"
+              <CustomTextField
+                label="Arabic Name"
                 value={surahName}
-                size="small"
-                onChange={(e) => {
-                  setSurahName(e.target.value);
+                onChange={(e) => setSurahName(e.target.value)}
+                placeholder="Al-Fatihah"
+                InputProps={{
+                  startAdornment: <Type className="w-4 h-4 mr-3 text-primary/50" />
                 }}
               />
-            </Box>
-
-            <Box sx={{ marginY: 1, display: "flex", flexDirection: "row" }}>
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="Luganda Name"
-                variant="outlined"
-                value={lugandaName}
-                size="small"
-                onChange={(e) => {
-                  setLugandaName(e.target.value);
+            </div>
+            <div className="space-y-6">
+              <CustomTextField
+                label="File Size (MB)"
+                value={fileSize}
+                onChange={(e) => setFileSize(e.target.value)}
+                placeholder="e.g. 5.2"
+                InputProps={{
+                  startAdornment: <Hash className="w-4 h-4 mr-3 text-primary/50" />
                 }}
               />
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="English Name"
-                variant="outlined"
-                value={englishName}
-                size="small"
-                onChange={(e) => {
-                  setEnglishName(e.target.value);
-                }}
-              />
-            </Box>
-
-            <Box sx={{ marginY: 1, display: "flex", flexDirection: "row" }}>
-              {" "}
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="Number of verses"
-                variant="outlined"
+              <CustomTextField
+                label="Verses Count"
                 value={verses}
-                size="small"
-                onChange={(e) => {
-                  setVerses(e.target.value);
+                onChange={(e) => setVerses(e.target.value)}
+                placeholder="e.g. 7"
+                InputProps={{
+                  startAdornment: <List className="w-4 h-4 mr-3 text-primary/50" />
                 }}
               />
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="Location"
-                variant="outlined"
-                value={location}
-                size="small"
-                onChange={(e) => {
-                  setLocation(e.target.value);
-                }}
-              />
-            </Box>
+            </div>
+          </div>
 
-            <Box sx={{ marginY: 1 }}>
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="Audio URL"
-                variant="outlined"
-                value={audioURL}
-                onChange={(e) => {
-                  setAudioURL(e.target.value);
-                }}
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <CustomTextField
+              label="Luganda Name"
+              value={lugandaName}
+              onChange={(e) => setLugandaName(e.target.value)}
+              placeholder="Fatiha"
+            />
+            <CustomTextField
+              label="English Meaning"
+              value={englishName}
+              onChange={(e) => setEnglishName(e.target.value)}
+              placeholder="The Opening"
+            />
+          </div>
 
-              <Box sx={{ marginY: 2 }}>
-                <InputLabel sx={{ marginBottom: 1, fontWeight: "600" }}>
-                  Quran File
-                </InputLabel>
-                <div>
-                  <div className="grid gap-5">
-                    <input
-                      onChange={(e) => handleUpload(e)}
-                      className="px-4 py-2 focus:border focus:border-blue-500"
-                      type="file"
-                      id="audioFile"
-                      name="audio"
-                      accept="audio/*"
-                    />
-                  </div>
+          <CustomTextField
+            label="Revelation City"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="Makka / Madina"
+            InputProps={{
+              startAdornment: <MapPin className="w-4 h-4 mr-3 text-primary/50" />
+            }}
+          />
 
-                  {uploading && (
-                    <div className="outerbar">
-                      <CircularProgress
-                        variant="determinate"
-                        value={uploadProgress}
-                      />
-                    </div>
-                  )}
+          {/* Audio Section */}
+          <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 space-y-6">
+            <div className="flex items-center gap-3 px-1">
+              <FileAudio className="w-4 h-4 text-primary" />
+              <span className="text-[10px] font-black uppercase text-white/40 tracking-widest">Recitation Audio</span>
+            </div>
 
-                  {audioURL && (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="">{audioName}</span>
-                      </div>
+            <input
+              type="file"
+              id="audio-upload"
+              className="hidden"
+              accept="audio/*"
+              onChange={handleUpload}
+            />
 
-                      <audio controls>
-                        <source src={audioURL} type="audio/mpeg" />
-                        <source src={audioURL} type="audio/mp4" />
-                        <source src={audioURL} type="audio/m4a" />
-                        <source src={audioURL} type="audio/mp3" />
-                        Your browser does not support the audio element.
-                      </audio>
-                    </div>
-                  )}
+            {!audioURL && !uploading && (
+              <label
+                htmlFor="audio-upload"
+                className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-white/10 rounded-[2rem] hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group"
+              >
+                <div className="p-5 rounded-2xl bg-white/5 group-hover:bg-primary/10 transition-colors mb-4 border border-white/5 group-hover:border-primary/20">
+                  <Upload className="w-8 h-8 text-white/40 group-hover:text-primary transition-colors" />
                 </div>
-              </Box>
-            </Box>
+                <span className="text-sm font-bold text-white/60 group-hover:text-white">Cloud Upload Recitation</span>
+                <span className="text-[10px] text-white/20 mt-1 uppercase font-black">MP3 / WAV Files</span>
+              </label>
+            )}
 
-            <Box sx={{ marginY: 1 }}>
-              <TextField
-                fullWidth
-                id="outlined-basic"
-                label="Description"
-                variant="outlined"
-                value={description}
-                multiline
-                maxRows={4}
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                }}
-                size="small"
-              />
-            </Box>
-          </Box>
+            {uploading && (
+              <div className="py-12 text-center space-y-6">
+                <div className="relative inline-flex items-center justify-center">
+                  <CircularProgress variant="determinate" value={uploadProgress} size={80} thickness={4} sx={{ color: '#10b981' }} />
+                  <span className="absolute text-sm font-bold text-white">{uploadProgress}%</span>
+                </div>
+                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest animate-pulse">Uploading to Storage...</p>
+              </div>
+            )}
 
-          <Box sx={{ display: "flex", flexDirection: "row" }}>
-            <SubmitButton
-              variant="outline"
-              sx={{ display: "block", textAlign: "center" }}
-              onClick={handleSubmit}
+            {audioURL && (
+              <div className="p-6 bg-primary/5 rounded-[2rem] border border-primary/20 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="p-2 rounded-lg bg-primary/20 text-primary">
+                      <FileAudio className="w-4 h-4" />
+                    </div>
+                    <span className="text-xs text-white/80 font-bold truncate leading-tight">{audioName || 'Recitation Ready'}</span>
+                  </div>
+                  <label htmlFor="audio-upload" className="text-[10px] text-primary font-black uppercase tracking-widest hover:underline cursor-pointer">Replace</label>
+                </div>
+                <audio controls className="w-full h-12 accent-primary custom-audio-player">
+                  <source src={audioURL} type="audio/mpeg" />
+                </audio>
+              </div>
+            )}
+
+            <CustomTextField
+              label="Manual URL Override (Optional)"
+              value={audioURL}
+              onChange={(e) => setAudioURL(e.target.value)}
+              placeholder="https://..."
+            />
+          </div>
+
+          <CustomTextField
+            label="Context & Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            multiline
+            rows={4}
+            placeholder="Enter surah significance or history..."
+          />
+
+          <div className="flex gap-6 pt-6 sticky bottom-0 bg-[#0a0a0a]/80 backdrop-blur-md -m-10 p-10">
+            <button
+              onClick={handleClose}
+              className="flex-1 px-8 py-5 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-bold text-sm transition-all"
             >
-              Submit
-            </SubmitButton>
-            <CancelButton onClick={handleClose}>Cancel</CancelButton>
-          </Box>
-
-          {success && <Alert severity="success">{success}</Alert>}
-          {error && <Alert severity="warning">{error}</Alert>}
-        </Box>
-      </Modal>
-    </div>
+              Discard
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="flex-[2] px-8 py-5 rounded-2xl bg-primary text-black font-black text-sm hover:opacity-90 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-2 uppercase tracking-widest"
+            >
+              <Save className="w-5 h-5" /> {isEdit ? "Update Registry" : "Commit to Library"}
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </Modal>
   );
 }
+

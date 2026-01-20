@@ -1,34 +1,7 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { styled } from '@mui/material';
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4
-};
-
-const ConfirmButton = styled(Button)(() => ({
-  color: 'white',
-  marginTop: 5,
-  background: 'darkgreen',
-  marginRight: 3
-}));
-
-const CancelButton = styled(Button)(() => ({
-  color: 'white',
-  marginTop: 5,
-  background: 'darkred'
-}));
+import { motion, AnimatePresence } from 'framer-motion';
+import { OctagonAlert, Trash2, X } from 'lucide-react';
 
 export default function ConfirmDeleteModal({
   openConfirmDeleteModal,
@@ -36,32 +9,59 @@ export default function ConfirmDeleteModal({
   confirmDelete
 }) {
   return (
-    <div>
-      <Modal
-        open={openConfirmDeleteModal}
-        onClose={closeConfirmDeleteModal}
-        aria-labelledby='modal-modal-title'
-        aria-describedby='modal-modal-description'
-      >
-        <Box sx={style}>
-          <Typography id='modal-modal-title' variant='h4' component='h2'>
-            Confirm delete
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
+    <Modal
+      open={openConfirmDeleteModal}
+      onClose={closeConfirmDeleteModal}
+      className="flex items-center justify-center p-4 outline-none"
+    >
+      <AnimatePresence>
+        {openConfirmDeleteModal && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="w-full max-w-sm bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden"
           >
-            <ConfirmButton onClick={confirmDelete}>Delete</ConfirmButton>
-            <CancelButton onClick={closeConfirmDeleteModal}>
-              Cancel
-            </CancelButton>
-          </Box>
-        </Box>
-      </Modal>
-    </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/5 blur-[50px] rounded-full -mr-16 -mt-16 pointer-events-none" />
+
+            <div className="flex justify-center mb-8 relative z-10">
+              <div className="p-5 rounded-3xl bg-red-500/10 text-red-500 border border-red-500/20 shadow-lg shadow-red-500/5">
+                <OctagonAlert className="w-10 h-10" />
+              </div>
+            </div>
+
+            <div className="text-center relative z-10 mb-10">
+              <h2 className="text-2xl font-black text-white mb-3">Dangerous Action</h2>
+              <p className="text-sm text-white/40 leading-relaxed font-medium">
+                This record will be permanently purged from the database. This operation is <span className="text-red-500 font-bold">irreversible</span>.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 relative z-10">
+              <button
+                onClick={confirmDelete}
+                className="w-full py-4 rounded-2xl bg-red-600 text-white font-black text-sm hover:bg-red-700 hover:shadow-[0_0_20px_rgba(220,38,38,0.3)] transition-all flex items-center justify-center gap-2 uppercase tracking-widest"
+              >
+                <Trash2 className="w-4 h-4" /> Purge Permanently
+              </button>
+              <button
+                onClick={closeConfirmDeleteModal}
+                className="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-bold text-sm transition-all"
+              >
+                Abort & Keep
+              </button>
+            </div>
+
+            <button
+              onClick={closeConfirmDeleteModal}
+              className="absolute top-6 right-6 p-2 text-white/20 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Modal>
   );
 }
+
