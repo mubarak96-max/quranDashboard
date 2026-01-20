@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Book, Quote, Music, Library, ChevronRight, Sparkles } from 'lucide-react';
+import { Book, Quote, Music, Library, ChevronRight, Sparkles, Heart } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 const BentoCard = ({ title, description, icon: Icon, onClick, color, className }) => (
@@ -99,6 +99,15 @@ const Home = () => {
             onClick={() => navigate('/quotes')}
             color="bg-blue-600"
             className="md:col-span-1"
+          />
+
+          <BentoCard
+            title="Duas"
+            description="Manage supplications and prayers."
+            icon={Heart}
+            onClick={() => navigate('/duas')}
+            color="bg-red-500"
+            className="md:col-span-2"
           />
         </div>
       </div>

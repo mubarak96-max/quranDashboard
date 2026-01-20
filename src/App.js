@@ -4,6 +4,7 @@ import Home from './components/Home';
 import Surah from './components/Surah';
 import Audios from './components/Audios';
 import Books from './components/Books';
+import Duas from './components/Duas';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path='/quotes' element={<Quotes />} />
           <Route path='/audios' element={<Audios />} />
           <Route path='/books' element={<Books />} />
+          <Route path='/duas' element={<Duas />} />
         </Routes>
       </Router>
     </>
