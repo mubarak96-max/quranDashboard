@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Book, Quote, Music, Library, ChevronRight, Sparkles, Heart } from 'lucide-react';
+import { Book, Quote, Music, Library, ChevronRight, Sparkles, Heart, LogOut } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 const BentoCard = ({ title, description, icon: Icon, onClick, color, className }) => (
@@ -33,7 +33,7 @@ const BentoCard = ({ title, description, icon: Icon, onClick, color, className }
   </motion.div>
 );
 
-const Home = () => {
+const Home = ({ onLogout }) => {
   const navigate = useNavigate();
 
   return (
@@ -48,16 +48,33 @@ const Home = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-16 md:mb-24 space-y-4 text-center md:text-left"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/40 mb-4 mx-auto md:mx-0">
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Admin Dashboard</span>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/40 mb-4">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Admin Dashboard</span>
+              </div>
+              <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none">
+                Quran Dashboard
+              </h1>
+              <p className="text-white/40 text-lg md:text-xl max-w-2xl font-medium leading-relaxed mt-4">
+                The central hub for managing your digital Quran library, recitations, and community insights.
+              </p>
+            </div>
+
+            {/* Logout Button */}
+            {onLogout && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onLogout}
+                className="glass px-6 py-3 rounded-2xl flex items-center gap-3 text-white/70 hover:text-white hover:border-red-500/30 transition-all duration-300 group"
+              >
+                <LogOut className="w-5 h-5 group-hover:text-red-400 transition-colors" />
+                <span className="font-semibold">Logout</span>
+              </motion.button>
+            )}
           </div>
-          <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none">
-            Quran Dashboard
-          </h1>
-          <p className="text-white/40 text-lg md:text-xl max-w-2xl font-medium leading-relaxed mx-auto md:mx-0">
-            The central hub for managing your digital Quran library, recitations, and community insights.
-          </p>
         </motion.div>
 
         {/* Improved Bento Grid Layout */}
