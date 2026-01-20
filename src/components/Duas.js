@@ -9,7 +9,9 @@ import {
     Edit3,
     Search,
     ChevronUp,
-    Heart
+    Heart,
+    Languages,
+    Type
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { db } from "../firebase";
@@ -24,7 +26,7 @@ const DuaCard = ({ dua, index, onEdit, onDelete, className }) => (
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         className={cn(
-            "glass rounded-[2rem] p-10 relative overflow-hidden group border border-white/5 hover:border-red-500/30 transition-all duration-500 flex flex-col justify-between min-h-[300px]",
+            "glass rounded-[2rem] p-8 md:p-10 relative overflow-hidden group border border-white/5 hover:border-red-500/30 transition-all duration-500 flex flex-col justify-between min-h-[350px]",
             className
         )}
     >
@@ -54,19 +56,32 @@ const DuaCard = ({ dua, index, onEdit, onDelete, className }) => (
                 </div>
             </div>
 
-            <h3 className="text-2xl font-black text-white mb-4 group-hover:text-red-500 transition-colors">
-                {dua.data.title}
+            <h3 className="text-2xl font-black text-white mb-6 group-hover:text-red-500 transition-colors">
+                {dua.data.title || "Untitled Dua"}
             </h3>
 
-            <p className="text-xl font-medium text-white/90 leading-relaxed mb-6 line-clamp-3 text-right" dir="rtl">
+            <p className="text-2xl font-medium text-white/90 leading-relaxed mb-8 text-right font-serif" dir="rtl">
                 {dua.data.content}
             </p>
+
+            {dua.data.transliteration && (
+                <div className="mb-6 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                    <div className="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-widest text-red-500/50">
+                        <Languages className="w-3 h-3" /> Transliteration
+                    </div>
+                    <p className="text-sm text-white/60 leading-relaxed italic">
+                        {dua.data.transliteration}
+                    </p>
+                </div>
+            )}
         </div>
 
-        <div className="relative z-10 mt-auto pt-8 border-t border-white/5">
-            <p className="text-[10px] text-white/40 uppercase font-black tracking-widest mb-2">Translation</p>
-            <p className="text-sm text-white/60 line-clamp-2 leading-relaxed italic">
-                "{dua.data.translation}"
+        <div className="relative z-10 mt-auto pt-6 border-t border-white/5">
+            <div className="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-widest text-white/20">
+                <Type className="w-3 h-3" /> Translation
+            </div>
+            <p className="text-sm text-white/40 leading-relaxed">
+                {dua.data.translation || "No translation provided."}
             </p>
         </div>
     </motion.div>
@@ -119,8 +134,8 @@ const Duas = () => {
     };
 
     const filteredDuas = duas.filter(d =>
-        d.data.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        d.data.content.toLowerCase().includes(searchTerm.toLowerCase())
+        (d.data.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (d.data.content || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (

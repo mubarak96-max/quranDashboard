@@ -11,7 +11,7 @@ import {
     serverTimestamp
 } from "firebase/firestore";
 import { db } from "../firebase";
-import { X, Save, Heart, Bookmark } from 'lucide-react';
+import { X, Save, Heart, Bookmark, Languages, Type } from 'lucide-react';
 import Swal from "sweetalert2";
 
 const CustomTextField = ({ ...props }) => (
@@ -45,6 +45,7 @@ export default function DuaModal({
 }) {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const [transliteration, setTransliteration] = useState("");
     const [translation, setTranslation] = useState("");
 
     useEffect(() => {
@@ -56,6 +57,7 @@ export default function DuaModal({
                         const data = doc.data();
                         setTitle(data?.title || "");
                         setContent(data?.content || "");
+                        setTransliteration(data?.transliteration || "");
                         setTranslation(data?.translation || "");
                     }
                 })
@@ -63,16 +65,18 @@ export default function DuaModal({
         } else {
             setTitle("");
             setContent("");
+            setTransliteration("");
             setTranslation("");
         }
     }, [editId, isEdit, openModal]);
 
     const handleSubmit = async () => {
-        if (!title || !content) {
+        // Only Arabic content is strictly required per user request
+        if (!content) {
             Swal.fire({
                 icon: "error",
-                title: "Required Fields",
-                text: "Title and Dua content are required.",
+                title: "Required Field",
+                text: "Arabic text is required.",
                 background: "#171717",
                 color: "#fff"
             });
@@ -81,8 +85,9 @@ export default function DuaModal({
 
         try {
             const data = {
-                title,
+                title: title || "Untitled Dua",
                 content,
+                transliteration,
                 translation,
                 updatedAt: serverTimestamp()
             };
@@ -122,7 +127,7 @@ export default function DuaModal({
                 <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 blur-[80px] rounded-full -mr-32 -mt-32 pointer-events-none" />
 
                 {/* Header */}
-                <div className="relative z-10 px-8 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02] backdrop-blur-xl">
+                <div className="relative z-10 px-8 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02] backdrop-blur-xl sticky top-0">
                     <div className="flex items-center gap-4">
                         <div className="p-3 rounded-2xl bg-red-500/10 text-red-500 border border-red-500/20">
                             <Heart className="w-5 h-5" />
@@ -142,9 +147,9 @@ export default function DuaModal({
                     </button>
                 </div>
 
-                <div className="relative z-10 p-8 space-y-6">
+                <div className="relative z-10 p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
                     <CustomTextField
-                        label="Dua Title"
+                        label="Dua Title (Optional)"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="e.g. Dua for Protection"
@@ -154,13 +159,25 @@ export default function DuaModal({
                     />
 
                     <CustomTextField
-                        label="Arabic Content"
+                        label="Arabic text (Required)"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         multiline
                         rows={4}
                         placeholder="Enter the Arabic text..."
-                        sx={{ "& .MuiInputBase-input": { direction: 'rtl', fontFamily: 'initial' } }}
+                        sx={{ "& .MuiInputBase-input": { direction: 'rtl', fontFamily: 'initial', fontSize: '1.2rem' } }}
+                    />
+
+                    <CustomTextField
+                        label="Transliteration"
+                        value={transliteration}
+                        onChange={(e) => setTransliteration(e.target.value)}
+                        multiline
+                        rows={2}
+                        placeholder="Enter transliteration..."
+                        InputProps={{
+                            startAdornment: <Languages className="w-4 h-4 mr-3 text-red-500/50" />
+                        }}
                     />
 
                     <CustomTextField
@@ -170,9 +187,12 @@ export default function DuaModal({
                         multiline
                         rows={3}
                         placeholder="Enter the translation..."
+                        InputProps={{
+                            startAdornment: <Type className="w-4 h-4 mr-3 text-red-500/50" />
+                        }}
                     />
 
-                    <div className="flex gap-4 pt-4">
+                    <div className="flex gap-4 pt-4 sticky bottom-0 bg-[#0a0a0a]/80 backdrop-blur-md py-4">
                         <button
                             onClick={handleClose}
                             className="flex-1 px-6 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-bold text-sm transition-all"
