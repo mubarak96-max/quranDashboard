@@ -19,7 +19,8 @@ import {
   BookOpen,
   Music as MusicIcon,
   Layers,
-  FileText
+  FileText,
+  Sparkles
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { db } from "../firebase";
@@ -29,6 +30,7 @@ import { cn } from "../utils/cn";
 
 const SurahCard = ({ surah, onEdit, onDelete }) => {
   const [showMore, setShowMore] = useState(false);
+  const [showMoreTheme, setShowMoreTheme] = useState(false);
 
   return (
     <motion.div
@@ -63,6 +65,26 @@ const SurahCard = ({ surah, onEdit, onDelete }) => {
             </button>
           </div>
         </div>
+
+        {/* Surah Theme / Core Message */}
+        {surah.data.surahTheme && (
+          <div className="mb-4 p-3 rounded-xl bg-primary/5 border border-primary/10">
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase text-primary tracking-widest mb-1">
+              <Sparkles className="w-3 h-3" /> Core Theme
+            </div>
+            <p className="text-xs text-white/70 italic leading-relaxed">
+              {showMoreTheme ? surah.data.surahTheme : `${surah.data.surahTheme?.slice(0, 100)}${surah.data.surahTheme?.length > 100 ? '...' : ''}`}
+            </p>
+            {surah.data.surahTheme?.length > 100 && (
+              <button
+                onClick={() => setShowMoreTheme(!showMoreTheme)}
+                className="text-primary text-[10px] font-bold hover:underline mt-1"
+              >
+                {showMoreTheme ? "Show Less" : "Read More"}
+              </button>
+            )}
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="space-y-1">

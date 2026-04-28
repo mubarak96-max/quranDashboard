@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "../firebase";
-import { X, Upload, Save, FileAudio, Layout, Hash, Type, MapPin, List } from 'lucide-react';
+import { X, Upload, Save, FileAudio, Layout, Hash, Type, MapPin, List, Sparkles } from 'lucide-react';
 import Swal from "sweetalert2";
 
 const CustomTextField = ({ ...props }) => (
@@ -51,6 +51,7 @@ export default function AddSurahModal({
 
   const [location, setLocation] = useState("");
   const [verses, setVerses] = useState("");
+  const [surahTheme, setSurahTheme] = useState("");
 
   const [error, setError] = useState("");
 
@@ -70,6 +71,7 @@ export default function AddSurahModal({
           setLocation(data?.location || "");
           setVerses(data?.verses || "");
           setAudioName(data?.audioName || "");
+          setSurahTheme(data?.surahTheme || "");
         })
         .catch((error) => console.log(error));
     } else {
@@ -83,6 +85,7 @@ export default function AddSurahModal({
       setLocation("");
       setVerses("");
       setAudioName("");
+      setSurahTheme("");
       setUploadProgress(0);
     }
   }, [editId, isEdit, openModal]);
@@ -138,7 +141,8 @@ export default function AddSurahModal({
         fileSize: Number(fileSize),
         verses: Number(verses),
         location,
-        audioName
+        audioName,
+        surahTheme
       };
 
       if (isEdit) {
@@ -267,6 +271,18 @@ export default function AddSurahModal({
             placeholder="Makka / Madina"
             InputProps={{
               startAdornment: <MapPin className="w-4 h-4 mr-3 text-primary/50" />
+            }}
+          />
+
+          <CustomTextField
+            label="Surah Theme / Core Message"
+            value={surahTheme}
+            onChange={(e) => setSurahTheme(e.target.value)}
+            multiline
+            rows={4}
+            placeholder="e.g. Oneness of God, Day of Judgment, History of Prophets..."
+            InputProps={{
+              startAdornment: <Sparkles className="w-4 h-4 mr-3 text-primary/50" />
             }}
           />
 
